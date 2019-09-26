@@ -1,0 +1,79 @@
+module test;
+  reg Clk;
+  reg Reset;
+  reg Push;
+  reg Pop;
+  reg [3:0] Data_in;
+  wire [3:0] Data_out;
+  wire Fifo_full;
+  wire Fifo_empty;
+  // Fifo module instance created 
+fifo f
+  (
+    .data_out(Data_out),
+    .clk(Clk),
+    .reset(Reset),
+    .fifo_full(Fifo_full),
+    .fifo_empty(Fifo_empty),
+    .push(Push),
+    .pop(Pop),
+    .data_in(Data_in)
+  );
+   initial
+    begin
+      Clk=1'b0;
+      forever
+        #5 Clk=~Clk;
+    end
+  initial
+    begin
+      Reset<=1'b0;
+      Push<=1'b0;
+      Pop<=1'b0;
+      @(posedge Clk)
+      Reset= 1'b1;
+      @(posedge Clk or negedge Clk)
+      Reset= 1'b0;
+      @(posedge Clk or negedge Clk)
+      // 4 times Push and 1 time Pop
+      Push= 1'b1;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b0;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b1;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b0;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b1;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b0;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b1;
+      @(posedge Clk or negedge Clk)
+      Push= 1'b0;
+      @(posedge Clk or negedge Clk)
+        Pop= 1'b1;
+      @(posedge Clk or negedge Clk)
+      Pop= 1'b0;
+     end 
+  initial
+    begin
+      Data_in=4'd0;
+    end
+  always @(posedge Clk or negedge Clk)
+    begin
+       Data_in = Data_in+4'd1;
+    end
+initial
+  begin   
+  $monitor($time,"Data_out=%d,Fifo_Full=%d,Fifo_Empty=%d,Data_in=%d,Push=%d,Pop=%d",Data_out,Fifo_full,Fifo_empty,Data_in,Push,Pop);
+  end
+  initial
+  begin
+    #100 $finish;
+  end
+endmodule
+      
+      
+      
+      
