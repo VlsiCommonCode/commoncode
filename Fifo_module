@@ -1,0 +1,89 @@
+
+//NOTE:The maximum number of times push can be given in this fifo module is 4 ,that is following fifo module can store maximum of 4 values at a time.And When the pop signal is high then only we get value in Data_out.After each Push signal the value of count is increased ,And just after the Pop signal the value of count is decreased.
+//Also counter block in the diagram is just shown for showing that count value is increasing and decreasing according to the Push and Pop signal.
+//Also the Push and Pop signal cannot be given simultaneously.
+module fifo
+  (push,pop,data_in,clk,reset,data_out,fifo_full,fifo_empty);
+    input push;
+    input pop;
+  input [3:0] data_in;
+    input clk;
+    input reset;
+  output data_out;
+    output  fifo_full;
+  output fifo_empty;
+  reg [3:0] data_out;
+  reg fifo_full;
+  reg fifo_empty;
+  reg[3:0] data_mux1;
+  reg [3:0] data_mux2;
+  reg [3:0] data_mux3;
+  reg [3:0] data_mux4;
+  //Shift Register starts
+  always @(posedge clk)
+    begin
+      if(reset) 
+      begin
+        data_mux1<=0;
+        data_mux2<=0;
+        data_mux3<=0;
+        data_mux4<=0;
+      end
+      else if(push)
+      begin
+      data_mux1<=data_in;
+      data_mux2<=data_mux1;
+      data_mux3<=data_mux2;
+      data_mux4<=data_mux3;
+      end 
+     end
+  // Shift Register ends
+  // count is the select line for the mux
+  reg [2:0] count;
+  always @(posedge clk)
+    begin
+      if(reset)  
+         count = 3'd0;
+     end
+  // 4 to 1 Mux
+  always @(posedge clk)
+          begin 
+            if(pop==1)
+              begin
+                  case(count)
+                  3'd1:data_out=data_mux1;
+                  3'd2:data_out=data_mux2;
+                  3'd3:data_out=data_mux3;
+                  3'd4:data_out=data_mux4;
+                  endcase
+                count=count-1;
+              end  
+            else if(push==1)
+              begin
+                count=count+3'd1;
+              end
+          end
+  //Checking whether Fifo is empty or full
+  always @(posedge clk)
+    begin
+      if(count==3'd4)
+                begin
+                  fifo_full=1;
+                end
+                  else
+                 begin
+                   fifo_full=0;
+                 end
+            if(count==3'd0)
+                 begin
+                  fifo_empty=1;
+                 end
+                else
+                  begin
+                     fifo_empty =0;
+                  end
+    end
+endmodule 
+      
+                      
+                  
