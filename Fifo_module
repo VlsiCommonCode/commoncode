@@ -46,7 +46,7 @@ module fifo
          count = 3'd0;
      end
   // 4 to 1 Mux
-  always @(posedge clk)
+  always @(push or pop)
           begin 
             if(pop==1)
               begin
@@ -64,7 +64,7 @@ module fifo
               end
           end
   //Checking whether Fifo is empty or full
-  always @(posedge clk)
+  always @(count)
     begin
       if(count==3'd4)
                 begin
