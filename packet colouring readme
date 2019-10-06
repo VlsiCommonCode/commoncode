@@ -1,0 +1,11 @@
+packets of different sizes (byte,half word,word, double word) serial fed into the colouring unit which process the packet and store 
+it into fifo, colouring should take 1 clock cycle and return packet serially
+Input : Byte enable, data_in,clk
+output: packet_valid, data_out,data_valid
+conditions: 
+a): byte_enable != packet_valid
+b): data_valid valid after 1 clock_cycle of packet_valid
+Colouring: Adding a encryption key to cypher the data 
+           cyphered_data = data XOR cypher_key[data_width:0]
+           key = 0xDEADBEAFDEADBEAF
+Use your assumption and define it if something is not given
